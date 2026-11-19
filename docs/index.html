@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home battery MPC · Nobel Djessou</title>
+<style>
+  :root { --bg: #fafafa; --surface: #ffffff; --line: #e9eaeb; --fg: #181d27; --muted: #535862;
+          --accent: #416a6b; --accent-soft: #edf5f5; --grey: #a4a7ae; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 980px; margin: 0 auto; padding: 0 16px 48px; }
+  .notice { background: var(--accent); color: #fff; font-size: 14px; padding: 8px 16px; text-align: center; }
+  h1 { font-size: clamp(28px, 5vw, 40px); line-height: 1.15; margin: 32px 0 8px; }
+  h2 { font-size: 22px; margin: 44px 0 12px; }
+  .lead { font-size: 18px; color: var(--muted); max-width: 760px; }
+  a { color: var(--accent); }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 24px 0; }
+  .kpis div { background: var(--surface); border-radius: 8px; padding: 12px 14px; border-top: 4px solid var(--line); }
+  .kpis div.win { border-top-color: var(--accent); }
+  .kpis b { display: block; font-size: 26px; font-variant-numeric: tabular-nums; }
+  .kpis span { font-size: 14px; color: var(--muted); }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 12px; }
+  .controls button { font: inherit; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--accent); background: transparent; color: var(--accent); cursor: pointer; }
+  .controls button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  .bars { background: var(--surface); border-radius: 8px; padding: 12px 14px; }
+  .bar { display: grid; grid-template-columns: minmax(130px, 210px) 1fr; gap: 10px; align-items: center; margin: 6px 0; font-size: 14px; }
+  .bar .track { position: relative; height: 26px; }
+  .bar .fill { height: 100%; border-radius: 4px; background: var(--grey); }
+  .bar .fill.mpc { background: var(--accent); }
+  .bar .val { position: absolute; left: 8px; top: 3px; color: #fff; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  @media (max-width: 560px) { .bar { grid-template-columns: 1fr; gap: 2px; margin: 10px 0; } }
+  img.chart { width: 100%; height: auto; border-radius: 8px; background: #fff; display: block; }
+  .table-wrap { overflow-x: auto; background: var(--surface); border-radius: 8px; padding: 4px 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+  th, td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--muted); font-weight: 500; white-space: normal; vertical-align: bottom; }
+  td.best { color: var(--accent); font-weight: 600; }
+  .muted { color: var(--muted); font-size: 14px; }
+  ul { padding-left: 20px; }
+  footer { margin-top: 56px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+</head>
+<body>
+<div class="notice">Personal project. Real 2023 prices and weather, real household consumption; simulated battery; no real installation.</div>
+<main>
+  <h1>Scheduling a home battery against dynamic prices and a capacity tariff</h1>
+  <p class="lead">A household with solar panels, a battery and a dynamic contract pays for energy by the hour, for grid use by the kWh, and for its highest 15-minute import of each month. The built-in rule of most batteries, "store the solar surplus, use it later", sees none of that. How much does planning against prices and the peak save, over a full year?</p>
+
+  <div class="kpis" id="kpis"></div>
+
+  <h2>Yearly cost by strategy</h2>
+  <div class="controls" role="group" aria-label="Household" id="homes"></div>
+  <div class="bars" id="bars"></div>
+  <p class="muted" id="barnote"></p>
+
+  <h2>What the figures say</h2>
+  <ul>
+    <li><b>The short price horizon costs almost nothing.</b> Knowing prices only until tomorrow midnight, with true consumption and solar, the planner lands within a few euros of perfect foresight over the whole year.</li>
+    <li><b>The forecasts decide everything.</b> With naive forecasts (last week's average consumption, yesterday's solar) the planner does no better than the simple rule: what it gains on prices and peaks, it loses to surprises, extra cycling and higher monthly peaks.</li>
+    <li><b>Both forecasts matter.</b> Making only one of them exact closes a third to a half of the gap; it takes both to close it.</li>
+    <li><b>So the next step is clear</b>: a weather-based solar forecast and a better consumption model, judged by what they save in euros, not by their forecast error alone.</li>
+  </ul>
+
+  <h2>One winter week</h2>
+  <p class="muted">Home A, 9 to 15 January 2023 (week chosen before looking at the results). Little sun: the rule leaves the battery empty most of the week. The planner charges when prices dip, up to the 2.5 kW that the minimum capacity charge pays for anyway, and discharges when prices rise.</p>
+  <img class="chart" src="week.png" alt="Day-ahead price, grid exchange and battery level over one week, rule versus MPC" width="1210" height="770">
+
+  <h2>All figures</h2>
+  <div class="table-wrap"><table id="table"></table></div>
+  <p class="muted" id="tablenote"></p>
+
+  <h2>How it works</h2>
+  <ul>
+    <li><b>Linear program</b> (HiGHS): per 15 minutes, charge, discharge, import, export, curtailment and state of charge; per month, the import peak billed by the capacity tariff. Raising the peak costs only what goes above the peak already reached that month.</li>
+    <li><b>Receding horizon</b>: every hour the plan is redone until the last published day-ahead price (prices for tomorrow come out around 13:00), and only its first hour is applied.</li>
+    <li><b>Between replans</b>: every 15 minutes the battery holds the grid exchange the plan expected, absorbing the forecast error, and never lets the import go past the monthly peak the plan allowed.</li>
+    <li><b>Simple forecasts</b>: consumption = mean of the same quarter-hour over the last 7 days; solar = same quarter-hour yesterday.</li>
+  </ul>
+
+  <h2>Limits</h2>
+  <ul>
+    <li><b>Simulation</b>: no real inverter, no communication delays, battery modelled by its efficiency and a wear cost per kWh.</li>
+    <li><b>Mixed sources</b>: 2016 households, 2023 prices and weather, 2025 grid tariffs. Each is real; together they make a plausible household, not a measured one.</li>
+    <li><b>Two households</b>, without heat pump or electric car: the capacity tariff weighs less than in an electrified home.</li>
+    <li><b>Household bill only</b>: no balancing markets, no fleet aggregation.</li>
+  </ul>
+
+  <footer>
+    Code, data and method: <a href="https://github.com/profirst30/home-battery-mpc">github.com/profirst30/home-battery-mpc</a> ·
+    <a href="https://www.linkedin.com/in/nobel-djessou/">Nobel Djessou</a><br>
+    Data: Energy-Charts (Bundesnetzagentur / SMARD.de, CC BY 4.0); PVGIS 5.3, European Commission JRC; Open Power System Data, Household Data (CC BY 4.0); Fluvius tariff sheet.
+  </footer>
+</main>
+<script src="results.js"></script>
+<script>
+const R = window.RESULTS;
+const S = ["no battery", "self-consumption rule", "MPC, simple forecasts", "MPC, true load, simple solar",
+           "MPC, true solar, simple load", "MPC, perfect forecasts", "perfect foresight"];
+const eur = v => Math.round(v).toLocaleString("en") + " EUR";
+const homes = Object.keys(R.homes);
+const A = R.homes[homes[0]];
+const save = (H, s) => H["no battery"].cost.total - H[s].cost.total;
+
+const gap = s => homes.map(h => Math.round(100 * R.gap_closed[h][s])).join(" / ") + " %";
+document.getElementById("kpis").innerHTML = [
+  ["", eur(save(A, "self-consumption rule")), `saved per year by the simple rule (${homes[0]}, vs no battery)`],
+  ["win", gap("MPC, perfect forecasts"), "of the gap to perfect foresight closed by the planner with true forecasts (home A / B)"],
+  ["", gap("MPC, simple forecasts"), "closed with simple forecasts: the forecast is where the money is"],
+  ["", Math.round(R.timing.ms_per_replan) + " ms", "per replan on a laptop CPU"],
+].map(([c, b, s]) => `<div class="${c}"><b>${b}</b><span>${s}</span></div>`).join("");
+
+function show(h) {
+  const H = R.homes[h], max = Math.max(...S.map(s => H[s].cost.total));
+  document.getElementById("bars").innerHTML = S.map(s =>
+    `<div class="bar"><span>${s}</span><div class="track"><div class="fill ${s.startsWith("MPC") ? "mpc" : ""}" style="width:${Math.max(18, 100 * H[s].cost.total / max)}%"></div><span class="val">${eur(H[s].cost.total)}</span></div></div>`).join("");
+  document.getElementById("barnote").textContent =
+    `${h}: ${Math.round(H.consumption_kwh).toLocaleString("en")} kWh consumed, ${Math.round(R.pv_kwh).toLocaleString("en")} kWh of solar. ` +
+    `Energy bought minus energy sold, plus capacity charge, plus battery wear, VAT included. Perfect foresight is a bound, not a controller.`;
+  let t = "<tr><th>strategy</th><th>total</th><th>energy</th><th>capacity</th><th>wear</th><th>saved vs no battery</th><th>mean monthly peak</th><th>imported</th><th>exported</th></tr>";
+  for (const s of S) {
+    const r = H[s], c = r.cost;
+    t += `<tr><td>${s}</td><td>${eur(c.total)}</td><td>${eur(c.energy)}</td><td>${eur(c.capacity)}</td><td>${eur(c.wear)}</td>` +
+         `<td>${eur(save(H, s))}</td><td>${r.mean_monthly_peak_kw.toFixed(2)} kW</td><td>${Math.round(r.import_kwh).toLocaleString("en")} kWh</td><td>${Math.round(r.export_kwh).toLocaleString("en")} kWh</td></tr>`;
+  }
+  document.getElementById("table").innerHTML = t;
+  document.querySelectorAll("#homes button").forEach(b => b.setAttribute("aria-pressed", b.dataset.h === h));
+}
+document.getElementById("homes").innerHTML = homes.map(h => `<button type="button" data-h="${h}">${h}</button>`).join("");
+document.querySelectorAll("#homes button").forEach(b => b.onclick = () => show(b.dataset.h));
+show(homes[0]);
+
+const T = R.tariff, B = R.assumptions.battery;
+document.getElementById("tablenote").textContent =
+  `Battery ${B.capacity_kwh} kWh / ${B.power_kw} kW, ${Math.round(100 * B.efficiency)} % efficiency each way, ${B.wear_eur_kwh} EUR wear per kWh discharged (assumptions). ` +
+  `Grid fee ${(100 * T.grid_eur_kwh).toFixed(2)} c/kWh, levies ${(100 * T.levies_eur_kwh).toFixed(2)} c/kWh, capacity ${T.capacity_eur_kw_year} EUR/kW/year (minimum ${T.min_peak_kw} kW), VAT included. ` +
+  `2023 day-ahead prices: mean ${Math.round(R.prices.mean_eur_mwh)} EUR/MWh, ${R.prices.negative_hours} hours below zero. ` +
+  `One replan: ${Math.round(R.timing.ms_per_replan)} ms (${R.timing.cpu}); perfect foresight, the whole year as one LP: ${R.timing.perfect_foresight_s.toFixed(1)} s.`;
+</script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+{
+  "pv_kwh": 4034.02332,
+  "homes": {
+    "home A": {
+      "consumption_kwh": 2707.0809999999997,
+      "no battery": {
+        "cost": {
+          "energy": 203.9436253922148,
+          "capacity": 192.24054973332136,
+          "wear": 0.0,
+          "total": 396.18417512553617
+        },
+        "import_kwh": 1722.505300000004,
+        "export_kwh": 2695.5325300000077,
+        "curtailed_kwh": 353.9150899999962,
+        "mean_monthly_peak_kw": 3.59847999999972
+      },
+      "self-consumption rule": {
+        "cost": {
+          "energy": 58.06144715326382,
+          "capacity": 175.14888313332386,
+          "wear": 28.56298240950013,
+          "total": 261.7733126960878
+        },
+        "import_kwh": 770.4058863499995,
+        "export_kwh": 1718.7145283379518,
+        "curtailed_kwh": 278.39279232686727,
+        "mean_monthly_peak_kw": 2.612493333333003
+      },
+      "MPC, simple forecasts": {
+        "cost": {
+          "energy": 36.791462000087705,
+          "capacity": 168.5330283320253,
+          "wear": 50.910828002022306,
+          "total": 256.23531833413534
+        },
+        "import_kwh": 1037.796934501899,
+        "export_kwh": 2001.174538067526,
+        "curtailed_kwh": 181.68968055847083,
+        "mean_monthly_peak_kw": 3.1281885892857844
+      },
+      "MPC, true load, simple solar": {
+        "cost": {
+          "energy": 25.000473816999076,
+          "capacity": 152.4929126523204,
+          "wear": 46.87007354896894,
+          "total": 224.36346001828844
+        },
+        "import_kwh": 967.3250781111169,
+        "export_kwh": 1953.2855167244593,
+        "curtailed_kwh": 174.8151827338609,
+        "mean_monthly_peak_kw": 2.774368983332879
+      },
+      "MPC, true solar, simple load": {
+        "cost": {
+          "energy": 10.70899804089558,
+          "capacity": 173.92800022254943,
+          "wear": 51.422583208071615,
+          "total": 236.05958147151662
+        },
+        "import_kwh": 898.1498034163267,
+        "export_kwh": 1900.7726226393852,
+        "curtailed_kwh": 141.52543587252822,
+        "mean_monthly_peak_kw": 3.160133592862976
+      },
+      "MPC, perfect forecasts": {
+        "cost": {
+          "energy": -8.110678783665193,
+          "capacity": 143.71323333332978,
+          "wear": 46.471590635250166,
+          "total": 182.07414518491476
+        },
+        "import_kwh": 806.3224512575468,
+        "export_kwh": 1845.585868720636,
+        "curtailed_kwh": 122.9471839058159,
+        "mean_monthly_peak_kw": 2.1074633333334734
+      },
+      "perfect foresight": {
+        "cost": {
+          "energy": -8.548383216896717,
+          "capacity": 143.71323333332984,
+          "wear": 45.73215335700016,
+          "total": 180.89700347343327
+        },
+        "import_kwh": 808.529135431509,
+        "export_kwh": 1844.5099519575485,
+        "curtailed_kwh": 123.11718390581598,
+        "mean_monthly_peak_kw": 2.0911533333334558
+      }
+    },
+    "home B": {
+      "consumption_kwh": 2661.031,
+      "no battery": {
+        "cost": {
+          "energy": 224.9712031388318,
+          "capacity": 148.9163802666676,
+          "wear": 0.0,
+          "total": 373.8875834054994
+        },
+        "import_kwh": 1842.9132599999996,
+        "export_kwh": 2843.871759999998,
+        "curtailed_kwh": 372.03382000000136,
+        "mean_monthly_peak_kw": 2.7706533333333425
+      },
+      "self-consumption rule": {
+        "cost": {
+          "energy": 72.7270220495194,
+          "capacity": 137.83421700000858,
+          "wear": 29.746089272999978,
+          "total": 240.30732832252795
+        },
+        "import_kwh": 851.3769509000002,
+        "export_kwh": 1820.9431489196686,
+        "curtailed_kwh": 299.46513567866936,
+        "mean_monthly_peak_kw": 1.6974779666667599
+      },
+      "MPC, simple forecasts": {
+        "cost": {
+          "energy": 55.973663106561844,
+          "capacity": 136.833558355676,
+          "wear": 50.51661999591526,
+          "total": 243.32384145815308
+        },
+        "import_kwh": 1130.5686164976682,
+        "export_kwh": 2128.3460863962614,
+        "curtailed_kwh": 196.45693875877507,
+        "mean_monthly_peak_kw": 2.3929289872247783
+      },
+      "MPC, true load, simple solar": {
+        "cost": {
+          "energy": 42.73077136187977,
+          "capacity": 133.15,
+          "wear": 46.2969664773067,
+          "total": 222.17773783918648
+        },
+        "import_kwh": 1042.6041204585956,
+        "export_kwh": 2056.7013250535983,
+        "curtailed_kwh": 195.33263224572062,
+        "mean_monthly_peak_kw": 2.3481933333333367
+      },
+      "MPC, true solar, simple load": {
+        "cost": {
+          "energy": 26.483988064201185,
+          "capacity": 134.12643333333446,
+          "wear": 50.783455933704865,
+          "total": 211.3938773312405
+        },
+        "import_kwh": 983.7513985517971,
+        "export_kwh": 2024.1377475111299,
+        "curtailed_kwh": 152.88715465890425,
+        "mean_monthly_peak_kw": 2.270485570505105
+      },
+      "MPC, perfect forecasts": {
+        "cost": {
+          "energy": 7.849487213079698,
+          "capacity": 133.15,
+          "wear": 46.539033109500025,
+          "total": 187.53852032257973
+        },
+        "import_kwh": 881.6687363222999,
+        "export_kwh": 1949.2000383933514,
+        "curtailed_kwh": 141.02682667590096,
+        "mean_monthly_peak_kw": 1.9589033333333432
+      },
+      "perfect foresight": {
+        "cost": {
+          "energy": 7.817362768228605,
+          "capacity": 133.15,
+          "wear": 46.07727219224997,
+          "total": 187.0446349604786
+        },
+        "import_kwh": 888.0682296544328,
+        "export_kwh": 1950.5355526740302,
+        "curtailed_kwh": 141.43786720221667,
+        "mean_monthly_peak_kw": 1.9219800000000486
+      }
+    }
+  },
+  "gap_closed": {
+    "home A": {
+      "MPC, simple forecasts": 0.0684748650770678,
+      "MPC, true load, simple solar": 0.4625563782195984,
+      "MPC, true solar, simple load": 0.3179389795568025,
+      "MPC, perfect forecasts": 0.9854451603591259
+    },
+    "home B": {
+      "MPC, simple forecasts": -0.05663463383499214,
+      "MPC, true load, simple solar": 0.3403806555576691,
+      "MPC, true solar, simple load": 0.5428462055936663,
+      "MPC, perfect forecasts": 0.9907273678643326
+    }
+  },
+  "timing": {
+    "ms_per_replan": 13.823175415239277,
+    "perfect_foresight_s": 9.771714350004913,
+    "cpu": "AMD Ryzen 7 5825U with Radeon Graphics",
+    "horizon_steps_min": 45,
+    "horizon_steps_max": 144
+  },
+  "assumptions": {
+    "battery": {
+      "capacity_kwh": 6.0,
+      "power_kw": 3.0,
+      "efficiency": 0.95,
+      "wear_eur_kwh": 0.03
+    },
+    "supplier_margin_eur_kwh": 0.01,
+    "pv_kwp": 4.0,
+    "replan_every_steps": 4
+  },
+  "tariff": {
+    "grid_eur_kwh": 0.0599,
+    "levies_eur_kwh": 0.05237,
+    "capacity_eur_kw_year": 53.26,
+    "min_peak_kw": 2.5,
+    "vat": 0.06
+  },
+  "prices": {
+    "mean_eur_mwh": 97.26942808219178,
+    "negative_hours": 222
+  }
+}
